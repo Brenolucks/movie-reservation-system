@@ -2,9 +2,7 @@ package dev.brenolucks.movieReservation.domain;
 
 import dev.brenolucks.movieReservation.domain.enums.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +12,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "tb_users")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Users implements UserDetails {
@@ -22,6 +21,8 @@ public class Users implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String username;
+
+    @Column(unique = true)
     private String email;
     private String password;
 
