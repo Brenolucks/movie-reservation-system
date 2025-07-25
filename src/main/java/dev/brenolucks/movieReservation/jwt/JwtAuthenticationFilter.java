@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collection;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -34,11 +36,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if(token != null && jwtUtils.tokenValid(token)) {
             var username =jwtUtils.getUsernameByToken(token);
-            var userDetails = userDetailsServiceImplementation.loadUserByUsername(username);
 
-            if(username != null && SecurityContextHolder.getContext().getAuthentication() != null) {
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null,
-                        userDetails.getAuthorities());
+            if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                var userDetails = userDetailsServiceImplementation.loadUserByUsername(username);
+                Collection<? extends GrantedAuthority> authorities = jwtUtils.extractAuthorities(token);
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null,
+                        authorities);
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }

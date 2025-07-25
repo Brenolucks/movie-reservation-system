@@ -1,10 +1,8 @@
 package dev.brenolucks.movieReservation.service.users;
 
 import dev.brenolucks.movieReservation.domain.Users;
-import dev.brenolucks.movieReservation.domain.dto.users.LoginRequestDTO;
-import dev.brenolucks.movieReservation.domain.dto.users.RegisterRequestDTO;
-import dev.brenolucks.movieReservation.domain.dto.users.ResponseLoginDTO;
-import dev.brenolucks.movieReservation.domain.dto.users.ResponseRegisterDTO;
+import dev.brenolucks.movieReservation.domain.dto.users.*;
+import dev.brenolucks.movieReservation.domain.enums.Role;
 import dev.brenolucks.movieReservation.domain.mappers.users.UsersMapper;
 import dev.brenolucks.movieReservation.repository.users.UsersRepository;
 import dev.brenolucks.movieReservation.utils.JwtUtils;
@@ -46,7 +44,7 @@ public class IUserService implements UserService{
 
     @Override
     public ResponseLoginDTO loginUser(LoginRequestDTO loginRequestDTO) {
-        usersRepository.findByEmail(loginRequestDTO.email()).orElseThrow(() -> new RuntimeException("Users not exists!"));
+        var data = usersRepository.findByEmail(loginRequestDTO.email()).orElseThrow(() -> new RuntimeException("Users not exists!"));
 
         var user = new UsernamePasswordAuthenticationToken(loginRequestDTO.username(), loginRequestDTO.password());
 
@@ -54,5 +52,14 @@ public class IUserService implements UserService{
         var token = jwtUtils.generateToken((Users) userAuthenticated.getPrincipal());
 
         return new ResponseLoginDTO(loginRequestDTO.email(), token);
+    }
+
+    @Override
+    public String promoteUser(PromoteUserDTO promoteUserDTO) {
+        var user = usersRepository.findByEmail(promoteUserDTO.email()).orElseThrow(() -> new RuntimeException("User not exist"));
+        user.setRole(promoteUserDTO.role());
+        usersRepository.save(user);
+
+        return "User promoted with success";
     }
 }

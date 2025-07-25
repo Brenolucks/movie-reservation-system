@@ -2,16 +2,18 @@ package dev.brenolucks.movieReservation.utils;
 
 import dev.brenolucks.movieReservation.config.properties.JwtProperties;
 import dev.brenolucks.movieReservation.domain.Users;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtils {
@@ -22,8 +24,14 @@ public class JwtUtils {
     }
 
     public String generateToken(Users users) {
+        Collection<String> authorities = users.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
         return Jwts.builder()
                 .subject(users.getUsername())
+                .claim("authorities", authorities)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
                 .signWith(getSigningKey())
@@ -66,7 +74,24 @@ public class JwtUtils {
                 .getSubject();
     }
 
+    public Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes()))
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
     public SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
+    }
+
+    public Collection<? extends GrantedAuthority> extractAuthorities(String token) {
+        Claims claims = extractAllClaims(token); // Use your existing claims extraction logic
+        List<String> authorities = claims.get("authorities", List.class);
+
+        return authorities.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 }

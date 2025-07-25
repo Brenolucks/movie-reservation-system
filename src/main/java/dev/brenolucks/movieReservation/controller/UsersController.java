@@ -1,16 +1,12 @@
 package dev.brenolucks.movieReservation.controller;
 
-import dev.brenolucks.movieReservation.domain.dto.users.LoginRequestDTO;
-import dev.brenolucks.movieReservation.domain.dto.users.RegisterRequestDTO;
-import dev.brenolucks.movieReservation.domain.dto.users.ResponseLoginDTO;
-import dev.brenolucks.movieReservation.domain.dto.users.ResponseRegisterDTO;
+import dev.brenolucks.movieReservation.domain.dto.users.*;
+import dev.brenolucks.movieReservation.domain.enums.Role;
 import dev.brenolucks.movieReservation.service.users.IUserService;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -32,4 +28,14 @@ public class UsersController {
         var res = userService.loginUser(loginRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
+
+    @PatchMapping("/promote-user")
+    public ResponseEntity<String> promoteUser(@RequestBody PromoteUserDTO promoteUserDTO) {
+        if(promoteUserDTO.role() == null) {
+            throw new IllegalArgumentException("You need pass a valid role, like 'ADMIN' or 'USER'.");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(userService.promoteUser(promoteUserDTO));
+    }
+
 }
