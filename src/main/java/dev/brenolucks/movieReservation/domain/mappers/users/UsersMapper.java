@@ -13,6 +13,6 @@ public interface UsersMapper {
 
     ResponseRegisterDTO toResponseDTO(Users users);
     Users toEntityByRegisterDTO(RegisterRequestDTO registerRequestDTO);
-    Users toEntityWithEncryptedPassword(String username, String email, String password, Role role);
+    Users toEntityWithEncryptedPassword(String username, String email, String password);
     Users toEntityPromoteUser(Role role);
 }

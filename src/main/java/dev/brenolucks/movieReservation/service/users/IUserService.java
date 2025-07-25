@@ -36,7 +36,8 @@ public class IUserService implements UserService{
 
         var passwordEncrypted = passwordEncoder.encode(registerRequestDTO.password());
 
-        var newUser = usersMapper.toEntityWithEncryptedPassword(registerRequestDTO.username(), registerRequestDTO.email(), passwordEncrypted, registerRequestDTO.role());
+        var newUser = usersMapper.toEntityWithEncryptedPassword(registerRequestDTO.username(), registerRequestDTO.email(), passwordEncrypted);
+        newUser.setRole(Role.USER);
         usersRepository.save(newUser);
 
         return new ResponseRegisterDTO(newUser.getUsername(), newUser.getEmail());
