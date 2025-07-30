@@ -37,6 +37,8 @@ public class SecurityFilterChainConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/movie/add").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.PATCH, "/api/movie/update").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/api/movie/delete").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/all-movies").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/reserve").hasRole("USER")
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
