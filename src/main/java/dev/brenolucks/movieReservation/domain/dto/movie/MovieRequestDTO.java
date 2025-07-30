@@ -12,6 +12,6 @@ import java.util.List;
 public record MovieRequestDTO(String title, String description, String genre, MovieImageDTO movieImage,
                               @JsonFormat(pattern = "yyyy-MM-dd") LocalDate dateBegin,
                               @JsonFormat(pattern = "yyyy-MM-dd") LocalDate dateEnd, BigDecimal price,
-                              List<ShowtimeDTO> showtime, List<ReserveDTO> reserves
+                              List<ShowtimeDTO> showtime
                               ) {
 }

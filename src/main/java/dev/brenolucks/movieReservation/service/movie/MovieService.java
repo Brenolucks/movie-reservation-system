@@ -21,6 +21,10 @@ public class MovieService implements IMovieService{
 
     @Override
     public String addMovie(MovieRequestDTO movieRequestDTO) {
+        movieRepository.findFirstByTitle(movieRequestDTO.title()).ifPresent(movie ->  {
+            throw new RuntimeException("Movie already exists!");
+        });
+
         movieRepository.save(movieMapper.toMovie(movieRequestDTO));
         return "Movie added with success!";
     }
