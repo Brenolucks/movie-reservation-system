@@ -6,21 +6,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "tb_reserve")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class Reserve {
+@Table(name = "tb_movie_image")
+public class MovieImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Users users;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Lob
+    private byte[] data;
+    private String contentType;
+    @OneToOne
     @JoinColumn(name = "movie_id")
     private Movie movie;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id")
-    private Room room;
 }

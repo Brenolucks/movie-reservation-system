@@ -1,9 +1,7 @@
 package dev.brenolucks.movieReservation.controller;
 
 import dev.brenolucks.movieReservation.domain.dto.users.*;
-import dev.brenolucks.movieReservation.domain.enums.Role;
-import dev.brenolucks.movieReservation.service.users.IUserService;
-import org.apache.coyote.Response;
+import dev.brenolucks.movieReservation.service.users.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +9,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api")
 public class UsersController {
-    private final IUserService userService;
+    private final UserService userService;
 
-    public UsersController(IUserService userService) {
+    public UsersController(UserService userService) {
         this.userService = userService;
     }
 

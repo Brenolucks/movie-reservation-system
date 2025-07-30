@@ -18,15 +18,26 @@ import java.util.List;
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
+    private String title;
     private String description;
+
     private String genre;
-    //private String posterImage;
-    @JsonFormat(pattern = "dd/MM/yyyy")
+
+    @OneToOne(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id")
+    private MovieImage image;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateBegin;
-    @JsonFormat(pattern = "dd/MM/yyyy")
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateEnd;
+
     private BigDecimal price;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Showtime> showtime;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Reserve> reserves;
